@@ -297,6 +297,7 @@ Planned enhancements for the framework:
     - Custom Allure reporting extensions
     - Logging improvements for better debugging
     - Test data management via factories
+    - Test run parallelization
 
 4. **CI/CD Integration**
     - Jenkins pipeline configuration
