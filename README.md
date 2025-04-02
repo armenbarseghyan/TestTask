@@ -101,6 +101,7 @@ The framework provides extensive test coverage across multiple areas:
 │       │       └── performance
 │       │           └── SimpleTodoPerformanceTest.java # Performance tests (4 tests)
 │       └── resources
+│           ├── api_test_suite.xml                  # XML suite for bunch of tests run
 │           └──test.properties                      # Configuration properties           
 ```
 
@@ -108,14 +109,14 @@ The framework provides extensive test coverage across multiple areas:
 
 The framework provides comprehensive coverage of the Todo API endpoints:
 
-| Endpoint             | HTTP Method | Tests | Validation Points                                               |
-|----------------------|-------------|-------|-----------------------------------------------------------------|
-| `/todos`             | GET         | 5     | Status code, content type, response format, empty list handling |
-| `/todos/{id}`        | GET         | 2     | Status code, todo retrieval, non-existent ID handling           |
-| `/todos`             | POST        | 10    | Status code, validation rules, concurrent creation              |
-| `/todos/{id}`        | PUT         | 6     | Status code, update validation, ID mismatch detection           |
-| `/todos/{id}`        | DELETE      | 6     | Status code, auth validation, non-existent ID handling          |
-| WebSocket `/ws`      | N/A         | 5     | Connection, notifications, absence of notifications             |
+| Endpoint             | HTTP Method | Validation Points                                               |
+|----------------------|-------------|-----------------------------------------------------------------|
+| `/todos`             | GET         | Status code, content type, response format, empty list handling |
+| `/todos/{id}`        | GET         | Status code, todo retrieval, non-existent ID handling           |
+| `/todos`             | POST        | Status code, validation rules, concurrent creation              |
+| `/todos/{id}`        | PUT         | Status code, update validation, ID mismatch detection           |
+| `/todos/{id}`        | DELETE      | Status code, auth validation, non-existent ID handling          |
+| WebSocket `/ws`      | N/A         | Connection, notifications, absence of notifications             |
 
 ### Key API Constants
 The framework uses 11 API constants for standardization:
@@ -289,7 +290,6 @@ Planned enhancements for the framework:
     - Implement non-blocking WebSocket client
 
 2. **Additional Test Types**
-    - Contract testing with Pact or Spring Cloud Contract
     - Security testing for authentication and authorization
     - Negative testing with boundary value analysis
 
@@ -297,6 +297,7 @@ Planned enhancements for the framework:
     - Custom Allure reporting extensions
     - Logging improvements for better debugging
     - Test data management via factories
+    - Test run parallelization
 
 4. **CI/CD Integration**
     - Jenkins pipeline configuration
@@ -306,7 +307,7 @@ Planned enhancements for the framework:
 ## Conclusion
 
 This framework provides comprehensive testing of the Todo API with:
-- 40 automated tests covering CRUD operations, WebSockets and performance
+- 42 automated tests covering CRUD operations, WebSockets and performance
 - Detailed reporting with Allure
 - Flexible configuration for different environments
 - Structured project organization for maintainability
