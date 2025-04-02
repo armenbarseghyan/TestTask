@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="TodoApp API Test Suite" verbose="1">
+    <listeners>
+        <listener class-name="org.testng.reporters.XMLReporter"/>
+    </listeners>
+    <test name="Todo CRUD API Tests">
+        <packages>
+            <package name="todoapp.api.*"/>
+        </packages>
+    </test>
+</suite>
