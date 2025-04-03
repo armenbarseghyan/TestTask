@@ -83,7 +83,6 @@
             <version>${awaitility.version}</version>
             <scope>test</scope>
         </dependency>
-
         <!-- Allure TestNG Integration -->
         <dependency>
             <groupId>io.qameta.allure</groupId>
@@ -97,9 +96,15 @@
             <artifactId>allure-rest-assured</artifactId>
             <version>${allure.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-maven</artifactId>
+            <version>2.12.0</version>
+        </dependency>
     </dependencies>
 
     <build>
+
         <plugins>
             <!-- Maven Surefire Plugin for running tests -->
             <!-- Maven Compiler Plugin with annotation processor configuration -->
@@ -116,7 +121,21 @@
                             <version>${lombok.version}</version>
                         </path>
                     </annotationProcessorPaths>
+
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <!-- Lombok Maven Plugin -->
@@ -128,23 +147,18 @@
                     <argLine>
                         -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
                     </argLine>
-                    <systemProperties>
+                    <systemPropertyVariables>
+                        <allure.results.directory>${project.build.directory}/allure-results</allure.results.directory>
+                        <allure.link.issue.pattern>https://example.com/issue/{}</allure.link.issue.pattern>
+                    </systemPropertyVariables>
+                    <properties>
                         <property>
-                            <name>allure.results.directory</name>
-                            <value>${project.build.directory}/allure-results</value>
+                            <name>listener</name>
+                            <value>todoapp.listeners.AllureReportListener,io.qameta.allure.testng.AllureTestNg</value>
                         </property>
-                    </systemProperties>
+                    </properties>
                 </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.aspectj</groupId>
-                        <artifactId>aspectjweaver</artifactId>
-                        <version>${aspectj.version}</version>
-                    </dependency>
-                </dependencies>
             </plugin>
-
-            <!-- Allure Maven Plugin -->
             <plugin>
                 <groupId>io.qameta.allure</groupId>
                 <artifactId>allure-maven</artifactId>
@@ -153,6 +167,10 @@
                     <reportVersion>${allure.version}</reportVersion>
                     <resultsDirectory>${project.build.directory}/allure-results</resultsDirectory>
                     <reportDirectory>${project.build.directory}/allure-report</reportDirectory>
+                    <allureDownloadUrl>https://github.com/allure-framework/allure2/releases/download/${allure.version}/allure-commandline-${allure.version}.zip</allureDownloadUrl>
+                    <properties>
+                        <allure.report.copyHistory>true</allure.report.copyHistory>
+                    </properties>
                 </configuration>
             </plugin>
         </plugins>
