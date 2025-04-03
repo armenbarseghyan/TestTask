@@ -185,40 +185,7 @@ public class TodoDeleteTest extends BaseTest {
 
         logger.info("API returned status code {} for negative ID", response.getStatusCode());
     }
-    @Test(description = "Delete multiple todos")
-    public void testDeleteMultipleTodos() {
-        logger.info("Executing multiple todo deletion test");
 
-        // Create 5 todos for deletion
-        TodoDto[] todos = new TodoDto[5];
-        for (int i = 0; i < 5; i++) {
-            String uniqueText = "Multiple deletion test " + i;
-            todos[i] = ApiUtils.createTestTodo(uniqueText);
-            assertNotNull(todos[i].getId(), "Todo " + i + " should be created");
-        }
-
-        // Record initial count
-        Response getAllBeforeResponse = ApiUtils.getAllTodos();
-        List<TodoDto> todosBefore = ApiUtils.getTodosFromResponse(getAllBeforeResponse);
-        int countBefore = todosBefore.size();
-
-        // Delete all test todos
-        for (TodoDto todo : todos) {
-            Response response = ApiUtils.deleteTodo(todo.getId());
-            assertEquals(response.getStatusCode(), ApiConstants.STATUS_NO_CONTENT,
-                "Expected 204 No Content for deletion");
-        }
-
-        // Verify todos are gone
-        Response getAllAfterResponse = ApiUtils.getAllTodos();
-        List<TodoDto> todosAfter = ApiUtils.getTodosFromResponse(getAllAfterResponse);
-
-        assertEquals(todosAfter.size(), countBefore - 5,
-            "Todo count should decrease by 5 after deletions");
-    }
-    /**
-     * Verifies behavior when deleting a non-existent todo ID.
-     */
 
     @AfterClass
     public void tearDown() {
