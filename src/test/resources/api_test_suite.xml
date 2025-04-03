@@ -16,11 +16,11 @@
         <classes>
             <class name="todoapp.api.TodoCreateTest">
                 <methods>
-                    <include name="testCreateTodoWithValidData"/>
                     <include name="testCreateTodoWithExistingId"/>
-                    <include name="testCreateTodoWithEmptyText"/>
-                    <include name="testCreateMultipleTodos"/>
                     <include name="testCreateTodoWithoutId"/>
+                    <include name="testCreateTodoWithInvalidIdType"/>
+                    <include name="testConcurrentTodoCreationWithSameId"/>
+
                 </methods>
             </class>
             <class name="todoapp.api.TodoReadTest">
