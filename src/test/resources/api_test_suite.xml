@@ -1,15 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="TodoApp API Test Suite" verbose="1">
+    <!-- Listeners for Reporting and Results -->
     <listeners>
         <listener class-name="org.testng.reporters.XMLReporter"/>
         <listener class-name="io.qameta.allure.testng.AllureTestNg"/>
         <listener class-name="todoapp.listeners.AllureReportListener"/>
     </listeners>
 
+    <!-- Global Parameters -->
+    <parameter name="default.timeout" value="10000"/>
+
+    <!-- CRUD API Test Group -->
     <test name="Todo CRUD API Tests">
-        <packages>
-            <package name="todoapp.api.*"/>
-        </packages>
+        <classes>
+            <class name="todoapp.api.TodoCreateTest">
+                <methods>
+                    <include name="testCreateTodoWithValidData"/>
+                    <include name="testCreateTodoWithExistingId"/>
+                    <include name="testCreateTodoWithEmptyText"/>
+                    <include name="testCreateMultipleTodos"/>
+                    <include name="testCreateTodoWithoutId"/>
+                </methods>
+            </class>
+            <class name="todoapp.api.TodoReadTest">
+                <methods>
+                    <include name="testGetAllTodos"/>
+                    <include name="testGetTodoById"/>
+                    <include name="testGetNonExistentTodo"/>
+                    <include name="testResponseHeaders"/>
+                    <include name="testGetAllWhenEmpty"/>
+                </methods>
+            </class>
+            <class name="todoapp.api.TodoUpdateTest">
+                <methods>
+                    <include name="testUpdateTodoText"/>
+                    <include name="testUpdateTodoCompletionStatus"/>
+                    <include name="testUpdateNonExistentTodo"/>
+                    <include name="testUpdateTodoWithMissingFields"/>
+                    <include name="testUpdateWithMismatchedIds"/>
+                </methods>
+            </class>
+            <class name="todoapp.api.TodoDeleteTest">
+                <methods>
+                    <include name="testDeleteTodoWithAuth"/>
+                    <include name="testDeleteTodoWithoutProperAuth"/>
+                    <include name="testDeleteNonExistentTodo"/>
+                    <include name="testDeleteTodoAndVerifyInaccessible"/>
+                    <include name="testDeleteTodoWithNegativeId"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+
+    <!-- WebSocket Test Group -->
+    <test name="Todo WebSocket API Tests">
+        <classes>
+            <class name="todoapp.api.TodoWebSocketTest">
+                <methods>
+                    <include name="testWebSocketConnection"/>
+                    <include name="testNotificationOnTodoCreation"/>
+                    <include name="testMultipleNotifications"/>
+                    <include name="testNoNotificationForUpdates"/>
+                    <include name="testNoNotificationForDeletes"/>
+                </methods>
+            </class>
+        </classes>
     </test>
 </suite>
