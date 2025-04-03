@@ -15,7 +15,7 @@
         <restassured.version>5.3.0</restassured.version>
         <testng.version>7.7.1</testng.version>
         <jackson.version>2.15.2</jackson.version>
-        <lombok.version>1.18.28</lombok.version>
+        <lombok.version>1.18.30</lombok.version>
         <slf4j.version>2.0.7</slf4j.version>
         <java-websocket.version>1.5.3</java-websocket.version>
         <awaitility.version>4.2.0</awaitility.version>
@@ -75,6 +75,7 @@
             <version>${java-websocket.version}</version>
         </dependency>
 
+
         <!-- Awaitility for asynchronous operations -->
         <dependency>
             <groupId>org.awaitility</groupId>
@@ -101,6 +102,24 @@
     <build>
         <plugins>
             <!-- Maven Surefire Plugin for running tests -->
+            <!-- Maven Compiler Plugin with annotation processor configuration -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+                <configuration>
+                    <release>17</release>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+
+            <!-- Lombok Maven Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>

@@ -1,6 +1,8 @@
 package todoapp.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,7 +17,7 @@ public class TestConfig {
     private static final String PROPERTIES_FILE = "test.properties";
     private final Properties properties = new Properties();
     private static TestConfig instance;
-
+    private static final Logger logger = LoggerFactory.getLogger(TestConfig.class);
     /**
      * Private constructor to enforce singleton pattern and load properties.
      */

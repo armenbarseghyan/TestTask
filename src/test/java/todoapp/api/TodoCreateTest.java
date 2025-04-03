@@ -1,5 +1,7 @@
 package todoapp.api;
 
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
 import org.testng.annotations.*;
 import todoapp.constants.ApiConstants;
 import todoapp.dto.TodoDto;
@@ -18,6 +20,9 @@ import static org.testng.Assert.assertEquals;
  * Comprehensive test suite for POST /todos endpoint.
  * Covers various todo creation scenarios and validation checks.
  */
+
+@Epic("Tech-task")
+@Feature("Todo Create")
 public class TodoCreateTest extends BaseTest {
     private static final Logger logger = LoggerFactory.getLogger(TodoCreateTest.class);
 
