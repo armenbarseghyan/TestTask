@@ -1,9 +1,10 @@
 package todoapp.api;
 
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
 import todoapp.dto.TodoDto;
 import todoapp.utils.ApiUtils;
 import todoapp.utils.WebSocketClient;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterClass;
@@ -13,7 +14,6 @@ import org.testng.annotations.Test;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
 import static org.awaitility.Awaitility.await;
 import static org.testng.Assert.*;
 
@@ -21,10 +21,12 @@ import static org.testng.Assert.*;
  * Comprehensive test suite for WebSocket functionality.
  * Validates real-time notifications for todo operations.
  */
+
+@Epic("Tech-task")
+@Feature("Todo Update")
 public class TodoWebSocketTest extends BaseTest {
     private static final Logger logger = LoggerFactory.getLogger(TodoWebSocketTest.class);
     private WebSocketClient wsClient;
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     /**
      * Prepares WebSocket connection and test environment.

@@ -1,5 +1,7 @@
 package todoapp.api;
 
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
 import org.testng.annotations.BeforeMethod;
 import todoapp.constants.ApiConstants;
 import todoapp.dto.TodoDto;
@@ -21,6 +23,8 @@ import static todoapp.constants.ApiConstants.CONTENT_TYPE;
  * Comprehensive test suite for GET /todos endpoint functionality.
  * Verifies retrieval of todo items with various scenarios.
  */
+@Epic("Tech-task")
+@Feature("Todo Read")
 public class TodoReadTest extends BaseTest {
     private static final Logger logger = LoggerFactory.getLogger(TodoReadTest.class);
     private TodoDto testTodo1;

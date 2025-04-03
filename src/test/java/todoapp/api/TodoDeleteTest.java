@@ -1,5 +1,7 @@
 package todoapp.api;
 
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
 import todoapp.constants.ApiConstants;
 import todoapp.dto.TodoDto;
 import todoapp.utils.ApiUtils;
@@ -18,6 +20,8 @@ import static org.testng.Assert.*;
  * Comprehensive test suite for DELETE /todos/:id endpoint.
  * Covers various todo deletion scenarios and security validations.
  */
+@Epic("Tech-task")
+@Feature("Todo Delete")
 public class TodoDeleteTest extends BaseTest {
     private static final Logger logger = LoggerFactory.getLogger(TodoDeleteTest.class);
     private TodoDto testTodo;
