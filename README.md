@@ -163,7 +163,7 @@ mvn allure:report
 mvn allure:serve
 ```
 
-### Report Features
+### Planned  Report Features 
 - Test execution history
 - Detailed step breakdown
 - Request/response logging
@@ -307,7 +307,7 @@ Planned enhancements for the framework:
 ## Conclusion
 
 This framework provides comprehensive testing of the Todo API with:
-- 42 automated tests covering CRUD operations, WebSockets and performance
+- 40 automated tests covering CRUD operations, WebSockets and performance
 - Detailed reporting with Allure
 - Flexible configuration for different environments
 - Structured project organization for maintainability
