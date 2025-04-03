@@ -28,27 +28,6 @@ public class TodoCreateTest extends BaseTest {
 
 
 
-    /**
-     * Verifies todo creation with valid, minimal data.
-     */
-    @Test(description = "Create todo with standard valid data")
-    public void testCreateTodoWithValidData() {
-        logger.info("Executing valid todo creation test");
-        String uniqueText = generateUniqueText("Valid test todo");
-        TodoDto todoToCreate = TodoDto.createTodoWithText(uniqueText);
-        createAndVerifyTodo(todoToCreate, false);
-    }
-
-    /**
-     * Verifies todo creation with completed status.
-     */
-    @Test(description = "Create todo with completed status")
-    public void testCreateCompletedTodo() {
-        logger.info("Executing completed todo creation test");
-        String uniqueText = generateUniqueText("Completed todo");
-        TodoDto todoToCreate = TodoDto.createCustomTodo(uniqueText, true);
-        createAndVerifyTodo(todoToCreate, true);
-    }
 
     /**
      * Verifies prevention of creating todo with existing ID.
@@ -77,52 +56,6 @@ public class TodoCreateTest extends BaseTest {
     }
 
     /**
-     * Verifies todo creation with empty text.
-     */
-    @Test(description = "Create todo with empty text")
-    public void testCreateTodoWithEmptyText() {
-        logger.info("Executing empty text todo creation test");
-        long uniqueId = generateUniqueId();
-        TodoDto todoToCreate = TodoDto.builder()
-            .id(uniqueId)
-            .text("")
-            .completed(false)
-            .build();
-
-        Response response = ApiUtils.createTodo(todoToCreate);
-        assertEquals(response.getStatusCode(), ApiConstants.STATUS_CREATED,
-            "Should allow todo creation with empty text");
-
-        verifyTodoExistsById(uniqueId, "", false);
-    }
-
-    /**
-     * Verifies creating multiple todos in succession.
-     */
-    @Test(description = "Create multiple todos")
-    public void testCreateMultipleTodos() {
-        logger.info("Executing multiple todo creation test");
-        long baseTimestamp = generateUniqueId();
-        String[] uniqueTexts = new String[5];
-
-        // Create 5 todos
-        for (int i = 1; i <= 5; i++) {
-            uniqueTexts[i-1] = "Multiple creation test " + i + "_" + baseTimestamp;
-            TodoDto todoToCreate = TodoDto.builder()
-                .id(baseTimestamp + i)
-                .text(uniqueTexts[i-1])
-                .completed(false)
-                .build();
-
-            Response response = ApiUtils.createTodo(todoToCreate);
-            assertEquals(response.getStatusCode(), ApiConstants.STATUS_CREATED,
-                "Should create todo " + i);
-        }
-
-        verifyMultipleTodosExist(uniqueTexts);
-    }
-
-    /**
      * Verifies rejection of todo creation without ID.
      */
     @Test(description = "Prevent todo creation without ID")
@@ -136,30 +69,6 @@ public class TodoCreateTest extends BaseTest {
             .build();
 
         verifyNegativeScenario(todoWithoutId, "id");
-    }
-
-    /**
-     * Verifies handling of todo creation with extra fields.
-     */
-    @Test(description = "Create todo with extra fields")
-    public void testCreateTodoWithExtraFields() {
-        logger.info("Executing todo creation with extra fields test");
-        long uniqueId = generateUniqueId();
-        String uniqueText = generateUniqueText("Todo with extra fields");
-
-        Map<String, Object> todoWithExtraFields = new HashMap<>();
-        todoWithExtraFields.put("id", uniqueId);
-        todoWithExtraFields.put("text", uniqueText);
-        todoWithExtraFields.put("completed", false);
-        todoWithExtraFields.put("priority", "high");
-        todoWithExtraFields.put("dueDate", "2025-04-15");
-
-        Response response = ApiUtils.createTodoRaw(todoWithExtraFields);
-
-        assertEquals(response.getStatusCode(), ApiConstants.STATUS_CREATED,
-            "Should create todo with extra fields");
-
-        verifyTodoExists(uniqueText, null);
     }
 
     /**

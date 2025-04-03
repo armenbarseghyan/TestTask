@@ -4,7 +4,9 @@
     <listeners>
         <listener class-name="org.testng.reporters.XMLReporter"/>
         <listener class-name="io.qameta.allure.testng.AllureTestNg"/>
+        <listener class-name="todoapp.listeners.AllureReportListener"/>
     </listeners>
+
     <test name="Todo CRUD API Tests">
         <packages>
             <package name="todoapp.api.*"/>

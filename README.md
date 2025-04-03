@@ -6,7 +6,7 @@ A comprehensive test automation solution for a RESTful Todo API with WebSocket n
 
 ## Technology Stack
 
-- **Java 11** - Core programming language
+- **Java 17** - Core programming language
 - **TestNG** - Test execution framework with parallel test capabilities
 - **REST-assured** - API testing client
 - **Java WebSocket** - WebSocket client for notification testing

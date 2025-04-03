@@ -5,6 +5,8 @@ import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeSuite;
 import todoapp.config.TestConfig;
 import todoapp.constants.ApiConstants;
 import todoapp.dto.TodoDto;
@@ -13,21 +15,19 @@ import todoapp.utils.ApiUtils;
 import io.restassured.response.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testng.annotations.BeforeSuite;
+
 import java.util.List;
 import java.util.Optional;
 
 import static org.testng.Assert.*;
 
-/**
- * Base test class with common setup methods and helper methods for all tests
- */
+
 @Listeners(AllureReportListener.class)
 public class BaseTest {
     private static final Logger logger = LoggerFactory.getLogger(BaseTest.class);
     protected static final TestConfig config = TestConfig.getInstance();
 
-    @BeforeSuite
+    @BeforeSuite(alwaysRun = true)
     public void suiteSetup() {
         logger.info("Setting up test suite");
         // Initialize REST Assured with base URL
@@ -39,31 +39,56 @@ public class BaseTest {
         logger.info("WebSocket URL: {}", config.getWsUrl());
     }
 
-    @BeforeMethod
+    /**
+     * Setup before each test method to ensure a clean environment.
+     * Cleans up all todos to provide isolation between tests.
+     */
+    @BeforeMethod(alwaysRun = true)
     public void baseSetup() {
-        // Ensure clean slate for each test
-        ApiUtils.cleanUpAllTodos();
+        String methodName = getCallingMethodName();
+        logger.info("Setting up test environment for: {}", methodName);
+
+        // Clean slate for test isolation
+        try {
+            ApiUtils.cleanUpAllTodos();
+            logger.info("Successfully cleaned up all todos before test");
+        } catch (Exception e) {
+            logger.warn("Failed to clean up todos before test: {}", e.getMessage());
+        }
+    }
+
+    /**
+     * Cleanup after each test method.
+     * Ensures test data is removed even if test fails.
+     */
+    @AfterMethod(alwaysRun = true)
+    public void baseTearDown() {
+        String methodName = getCallingMethodName();
+        logger.info("Cleaning up after test: {}", methodName);
+
+        try {
+            ApiUtils.cleanUpAllTodos();
+            logger.info("Successfully cleaned up all todos after test");
+        } catch (Exception e) {
+            logger.warn("Failed to clean up todos after test: {}", e.getMessage());
+        }
     }
 
     protected TodoDto createAndVerifyTodo(TodoDto todoToCreate, boolean expectedCompletedStatus) {
+        logger.info("Creating todo: {}", todoToCreate);
         Response response = ApiUtils.createTodo(todoToCreate);
 
         // Verify status code
         assertEquals(response.getStatusCode(), ApiConstants.STATUS_CREATED,
-            "Expected status code 201 Created");
+            "Expected status code 201 Created for todo creation");
 
         // Verify todo exists with expected properties
         return verifyTodoExists(todoToCreate.getText(), expectedCompletedStatus);
     }
 
-    /**
-     * Verify a todo exists by searching for its text
-     *
-     * @param todoText Text to search for
-     * @param expectedCompletedStatus Expected completed status, or null if not checking
-     * @return The found todo
-     */
+
     protected TodoDto verifyTodoExists(String todoText, Boolean expectedCompletedStatus) {
+        logger.info("Verifying todo exists with text: '{}'", todoText);
         Response getAllResponse = ApiUtils.getAllTodos();
         List<TodoDto> todos = ApiUtils.getTodosFromResponse(getAllResponse);
 
@@ -83,18 +108,20 @@ public class BaseTest {
                 "Created todo completion status should be " + expectedCompletedStatus);
         }
 
+        logger.info("Successfully verified todo exists: {}", createdTodo);
         return createdTodo;
     }
 
     /**
-     * Verify a todo exists by ID
+     * Verifies a todo exists by ID and validates its properties.
      *
      * @param todoId ID to search for
      * @param expectedText Expected text
      * @param expectedCompleted Expected completed status
-     * @return The found todo
+     * @return The verified TodoDto
      */
     protected TodoDto verifyTodoExistsById(long todoId, String expectedText, boolean expectedCompleted) {
+        logger.info("Verifying todo exists with ID: {}", todoId);
         Response getAllResponse = ApiUtils.getAllTodos();
         List<TodoDto> todos = ApiUtils.getTodosFromResponse(getAllResponse);
 
@@ -110,15 +137,17 @@ public class BaseTest {
         assertEquals(createdTodo.getCompleted(), expectedCompleted,
             "Created todo completion status should be " + expectedCompleted);
 
+        logger.info("Successfully verified todo exists by ID: {}", createdTodo);
         return createdTodo;
     }
 
     /**
-     * Verify multiple todos exist
+     * Verifies multiple todos exist with the given texts.
      *
      * @param todoTexts Array of todo texts to verify
      */
     protected void verifyMultipleTodosExist(String[] todoTexts) {
+        logger.info("Verifying {} todos exist", todoTexts.length);
         Response getAllResponse = ApiUtils.getAllTodos();
         List<TodoDto> todos = ApiUtils.getTodosFromResponse(getAllResponse);
 
@@ -129,32 +158,35 @@ public class BaseTest {
 
             if (found) {
                 foundCount++;
+                logger.debug("Found todo with text: '{}'", text);
+            } else {
+                logger.warn("Could not find todo with text: '{}'", text);
             }
         }
 
         assertEquals(foundCount, todoTexts.length,
-            "Expected all " + todoTexts.length + " todos to be created");
+            "Expected all " + todoTexts.length + " todos to be created, but found " + foundCount);
+
+        logger.info("Successfully verified all {} todos exist", todoTexts.length);
     }
 
     /**
-     * Verify a negative scenario with missing or invalid field
+     * Verifies a negative scenario with missing or invalid field.
+     * Used for validating error cases in API tests.
      *
-     * @param todoData Map containing todo data
+     * @param todoData DTO containing todo data with issues
      * @param fieldName Name of the problematic field
      */
-
-
-
     protected void verifyNegativeScenario(TodoDto todoData, String fieldName) {
-        String testName = Thread.currentThread().getStackTrace()[2].getMethodName();
-        logger.info("[{}] Attempting to create/update with issue in field: {}", testName, fieldName);
+        String methodName = getCallingMethodName();
+        logger.info("[{}] Testing negative scenario with issue in field: {}", methodName, fieldName);
 
-        // Choose the appropriate API method
+        // Perform the operation that should fail
         Response response = ApiUtils.createTodoRaw(todoData);
 
         // Log response details for debugging
-        logger.info("[{}] Response Status Code: {}", testName, response.getStatusCode());
-        logger.info("[{}] Response Body: {}", testName, response.asString());
+        logger.info("[{}] Response Status Code: {}", methodName, response.getStatusCode());
+        logger.debug("[{}] Response Body: {}", methodName, response.asString());
 
         // Check status code is 400 Bad Request
         assertEquals(response.getStatusCode(), ApiConstants.STATUS_BAD_REQUEST,
@@ -168,24 +200,14 @@ public class BaseTest {
                 .anyMatch(todo -> todoData.getText().equals(todo.getText()));
             assertFalse(todoExists, "No todo should be created/updated with text: " + todoData.getText());
         }
+
+        logger.info("[{}] Successfully verified negative scenario for field: {}", methodName, fieldName);
     }
+
     /**
-     * Validate error response with more flexible checking
+     * Generates a unique ID for test data based on current timestamp.
+     * Useful for creating unique objects in tests.
      *
-     * @param response The API response
-     * @param fieldName The field expected to have an issue
-     */
-    private void validateErrorResponse(Response response, String fieldName) {
-        // Simply verify the status code indicates an error
-        assertEquals(response.getStatusCode(), ApiConstants.STATUS_BAD_REQUEST,
-            "Expected 400 Bad Request for issue with field: " + fieldName);
-
-        // Log the response body for debugging purposes
-        logger.debug("Error response: {}", response.asString());
-    }
-
-    /**
-     * Generate a unique ID for test data
      * @return A unique ID based on timestamp
      */
     protected long generateUniqueId() {
@@ -193,7 +215,9 @@ public class BaseTest {
     }
 
     /**
-     * Generate a test-specific string with unique identifier
+     * Generates a test-specific string with unique identifier.
+     * Useful for creating unique text values in tests.
+     *
      * @param prefix Text prefix
      * @return String with unique identifier
      */
@@ -201,4 +225,14 @@ public class BaseTest {
         return prefix + "_" + System.currentTimeMillis();
     }
 
+    /**
+     * Gets the calling method name for better logging.
+     *
+     * @return Name of the method that called the current method
+     */
+    private String getCallingMethodName() {
+        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+        // Index 2 would be the method that called this method
+        return stackTrace.length > 3 ? stackTrace[3].getMethodName() : "unknown";
+    }
 }
